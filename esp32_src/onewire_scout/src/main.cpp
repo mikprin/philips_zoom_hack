@@ -41,25 +41,32 @@ void loop() {
   delay(1000);     // maybe 750ms is enough, maybe not
   // we might do a ds.depower() here, but the reset will take care of it.
   
+  // Reset the bus
   present = ds.reset();
 
+  // Select the device
   if ( !ds.search(addr)) {
     Serial.print("No more addresses.\n");
     ds.reset_search();
     vTaskDelay(250 / portTICK_PERIOD_MS);
     return;
   }
-
+  // Print data
   Serial.print("R=");
   for( i = 0; i < 8; i++) {
     Serial.print(addr[i], HEX);
     Serial.print(" ");
   }
 
+  // Check CRC
+  if ( OneWire::crc8( addr, 7) != addr[7]) {
+    Serial.print("CRC is not valid!\n");
+    // return;
+  }
   // Read onewire memory
 
-  present = ds.reset();
-  ds.select(addr);
-  
+  // present = ds.reset();
+  // ds.select(addr);
+
   
 }
